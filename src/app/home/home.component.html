@@ -1,0 +1,173 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col" style="text-align: center">
+      <img style="width: 200px; margin-left: auto; margin-right: auto;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo">
+      <h1>DeNovo</h1>
+      <h6>Sistema de requerimentos de segunda chamada</h6>
+    </div>
+    
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            CRIAR NOVO REQUERIMENTO
+          </div>
+          <div class="row">
+            <div class="col">
+              <button class="btn btn-outline-success" (click)="formFlag=true" *ngIf="!formFlag">NOVO REQUERIMENTO</button>
+              <div *ngIf="formFlag">
+                <ngb-alert *ngIf="flagRa" [dismissible]="false" type="danger">
+                  RA inválido!
+                </ngb-alert>
+                <form #novo="ngForm" (ngSubmit)="novoRequerimento(novo)">
+                  <div class="form-group">
+                    <label for="ra">RA (apenas números)</label>
+                    <input required type="number" maxlength="5" class="form-control" placeholder="RA" id="ra" name="ra" [(ngModel)]="novo.ra">
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col">
+                      <label for="materia">Materia</label>
+                      <input required type="text" class="form-control" placeholder="Matéria" id="materia" name="materia" [(ngModel)]="novo.materia">
+                    </div>
+                    <div class="form-group col">
+                      <label for="professor">Professor</label>
+                      <select required class="form-control" name="professor" id="professor" [(ngModel)]="novo.professor">
+                        <option *ngFor="let p of professores" value="{{p.id}}">{{p.nome}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Justificativa</label>
+                    <div class="form-check">
+                      <input [(ngModel)]="novo.justificativa" type="radio" class="form-check-input" id="j1" name="justificativa" value="Problema de saúde"> 
+                      <label class="form-check-label" for="j1">Problema de saúde</label>
+                    </div>
+                    <div class="form-check">
+                      <input [(ngModel)]="novo.justificativa" type="radio" class="form-check-input" id="j2" name="justificativa" value="Obrigações com o Serviço Militar">
+                      <label class="form-check-label" for="j2">Obrigações com o Serviço Militar</label>  
+                    </div>
+                    <div class="form-check">
+                      <input [(ngModel)]="novo.justificativa" type="radio" class="form-check-input" id="j3" name="justificativa" value="Falecimento de parente de primeiro grau ou cônjuge">
+                      <label class="form-check-label" for="j3">Falecimento de parente de primeiro grau ou cônjuge</label>  
+                    </div>
+                    <div class="form-check">
+                      <input [(ngModel)]="novo.justificativa" type="radio" class="form-check-input" id="j4" name="justificativa" value="Convocação pelo Poder Judiciário ou Justiça Eleitoral">
+                      <label class="form-check-label" for="j4">Convocação pelo Poder Judiciário ou Justiça Eleitoral</label>  
+                    </div>
+                    <div class="form-check">
+                      <input [(ngModel)]="novo.justificativa" type="radio" class="form-check-input" id="j5" name="justificativa" value="Convocação do Campus do IFMS para representar a Instituição ou participar de alguma atividade/evento">
+                      <label class="form-check-label" for="j5">Convocação do Campus do IFMS para representar a Instituição ou participar de alguma atividade/evento</label>  
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-outline-success">Enviar</button>
+                </form>
+              </div>                    
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            CONSULTAR REQUERIMENTO
+          </div>
+          <form #pesquisa="ngForm" class="form-inline" (ngSubmit)="pesquisarRequerimento(pesquisa)">
+            <div class="form-group">
+              <input [(ngModel)]="pesquisa.hash" placeholder="Código do requerimento" class="form-control mr-sm-2" id="hash" name="hash" type="text">
+            </div>
+            <div (click)="openModal(info)"><button type="submit" class="btn btn-outline-success my-2 my-sm-0"><i class="fas fa-search"></i></button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            ADMINISTRAR REQUERIMENTO
+            <div class="row">
+              <div class="col">
+                <button class="btn btn-outline-success" (click)="openModal(coord)">COORDENAÇÃO</button>
+              </div>
+              <div class="col">
+                <button class="btn btn-outline-success" (click)="openModal(prof)">PROFESSOR</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #info let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">REQUERIMENTO - {{requerimento.hash}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h3>O status atual é {{requerimento.status}}</h3>
+    <h3 *ngIf="flagAg">A data da nova avaliação é {{agendamento.data}}</h3>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('Save click')">Ok</button>
+  </div>
+</ng-template>
+
+<ng-template #coord let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">LOGIN - COORDENAÇÃO</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert *ngIf="flagSenha" [dismissible]="false" type="danger">
+      Senha inválida!
+    </ngb-alert>
+    <form #loginC="ngForm" (ngSubmit)="loginCoord(loginC)">
+      <div class="form-group">
+        <label for="setor">Coordenação</label>
+        <select required [(ngModel)]="loginC.setor" class="form-control" name="setor" id="setor">
+          <option *ngFor="let s of setores" value="{{s}}">{{s}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input class="form-control" [(ngModel)]="loginC.senha" name="senha" id="senha" placeholder="Senha" type="password">
+      </div>
+      <button type="submit" class="btn btn-outline-success">Entrar</button>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #prof let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">LOGIN - PROFESSOR</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert *ngIf="flagSenha" [dismissible]="false" type="danger">
+      Senha inválida!
+    </ngb-alert>
+    <form #loginP="ngForm" (ngSubmit)="loginProf(loginP)">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input required type="email" class="form-control" name="email" id="email" placeholder="E-mail" [(ngModel)]="loginP.email">
+      </div>
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input class="form-control" [(ngModel)]="loginP.senha" name="senha" id="senha" placeholder="Senha" type="password">
+      </div>
+      <button type="submit" class="btn btn-outline-success">Entrar</button>
+    </form>
+  </div>
+</ng-template>

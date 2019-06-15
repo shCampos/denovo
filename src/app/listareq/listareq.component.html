@@ -1,0 +1,76 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col" style="text-align: center">
+      <img style="width: 200px; margin-left: auto; margin-right: auto;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo">
+      <h1>DeNovo</h1>
+      <h6>Sistema de requerimentos de segunda chamada</h6>
+    </div>
+    
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-title">
+            REQUERIMENTOS DISPONIVEIS
+            <button class="btn btn-outline-secondary" style="float: right" (click)="logoff()"><i class="fas fa-sign-out-alt"></i></button>
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Requerente</th>
+                <th scope="col">Materia</th>
+                <th scope="col">Professor</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of requerimentos" (click)="openModal(maisInfo); mudarReq(r)" style="cursor: pointer">
+                <td>{{r.aluno.nome_estudante}}</td>
+                <td>{{r.req.materia}}</td>
+                <td>{{r.prof.nome}}</td>
+                <td>{{r.req.status}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #maisInfo let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">INFORMAÇÕES</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h6><strong>Requerente:</strong> {{requerimento.aluno.nome_estudante}}</h6>
+    <h6><strong>Materia:</strong> {{requerimento.req.materia}}</h6>
+    <h6><strong>Professor:</strong> {{requerimento.prof.nome}}</h6>
+    <h6><strong>Justificativa:</strong> {{requerimento.req.justificativa}}</h6>
+    <h6><strong>Status:</strong> {{requerimento.req.status}}</h6>
+  </div>
+  <div class="modal-footer">
+    <form *ngIf="!flagUser" class="form-inline" #novoStatus="ngForm" (ngSubmit)="mudarStatus(novoStatus)">
+      <label for="status">Mudar status</label>
+      <select name="status" id="status" [(ngModel)]="novoStatus.status" class="form-control">
+        <option *ngFor="let s of status" value="{{s}}">{{s}}</option>
+      </select>
+      <button type="submit" class="btn btn-outline-success"><i class="fas fa-check"></i></button>
+    </form>
+
+    <form *ngIf="flagUser" class="form-inline" #novaData="ngForm" (ngSubmit)="agendarReq(novaData)">
+      <label for="data">Agendar</label>
+      <div class="input-group">
+        <input class="form-control" placeholder="yyyy-mm-dd" name="data" id="data" [(ngModel)]="novaData.data" ngbDatepicker #d="ngbDatepicker">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fas fa-calendar"></i></button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-outline-success"><i class="fas fa-check"></i></button>
+    </form>
+  </div>
+</ng-template>

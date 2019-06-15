@@ -1,0 +1,11 @@
+.container-fluid{
+    height: 100vh;
+}
+
+.row{
+    margin-top: auto;
+    margin-bottom: auto;
+    top: auto;
+    bottom: auto;
+    position: relative;
+}
