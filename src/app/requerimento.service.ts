@@ -33,6 +33,10 @@ export class RequerimentoService {
     return this.reqs;
   }
 
+  getByAlunoId(id){
+    return this.http.get(environment.url+"requerimento/est/"+id);
+  }
+
   setStatus(id, status){
     this.http.put(environment.url+"/requerimento/"+id, status)
     .subscribe(

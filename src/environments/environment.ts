@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   url: 'http://localhost:8085/api/',
   tipo_user: '',
-  id_prof: 0,
+  id: 0,
   setor: ''
 };
 

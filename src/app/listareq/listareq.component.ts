@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RequerimentoService } from '../requerimento.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlunoService } from '../aluno.service';
@@ -17,8 +17,10 @@ export class ListareqComponent implements OnInit {
   requerimentos: any[];
   requerimento: any;
   professor: any;
+  aluno: any;
   flagUser: Boolean;
-  status: any[] = ['Encaminhado', 'Deferido', 'Indeferido'];
+  flagAluno: Boolean;
+  status: any[] = ['Deferido', 'Indeferido'];
 
   constructor(private requerimentoService: RequerimentoService, private modal: NgbModal,
     private alunoService: AlunoService, private professorService: ProfessorService,
@@ -29,10 +31,14 @@ export class ListareqComponent implements OnInit {
   ngOnInit() {
     if(environment.tipo_user == "coord"){
       this.coord_getRequerimentos();
+      console.log(this.requerimentos);
       this.flagUser = false;
     }else if(environment.tipo_user == "prof"){
       this.prof_getRequerimentos();
       this.flagUser = true;
+    }else if(environment.tipo_user == "visitante"){
+      this.aluno_getRequerimentos();
+      this.flagAluno = true;
     }
     console.log(this.flagUser);
   }
@@ -41,8 +47,8 @@ export class ListareqComponent implements OnInit {
     this.requerimentoService.getAll()
     .subscribe(
       (res)=>{
-        for(var i=0;i<res.length;i++){
-          console.log("res[i]", res[i].id_professor);
+        for(let i=0;i<res.length;i++){
+          console.log("res[i]", res[i]);
           var req = res[i];
           var id_prof = res[i].id_professor;
           this.alunoService.getById(res[i].id_estudante)
@@ -50,11 +56,11 @@ export class ListareqComponent implements OnInit {
             (al)=>{
               //console.log(al.coordenacao, environment.setor, res[i].id_professor);
               if(al.coordenacao == environment.setor){
-                this.professorService.getById(id_prof)
+                this.professorService.getById(res[i].id_professor)
                 .subscribe(
                   (prof)=>{
                     this.requerimentos.push({
-                      req: req,
+                      req: res[i],
                       aluno: al,
                       prof: prof
                     });
@@ -72,8 +78,8 @@ export class ListareqComponent implements OnInit {
   }
 
   getProf(){
-    console.log("environment.id_prof", environment.id_prof);
-    this.professorService.getById(Number(environment.id_prof))
+    console.log("environment.id_prof", environment.id);
+    this.professorService.getById(Number(environment.id))
     .subscribe(
       (res)=>{
         this.professor = res;
@@ -88,7 +94,7 @@ export class ListareqComponent implements OnInit {
     .subscribe(
       (res)=>{
         for(var i=0;i<res.length;i++){
-          if(res[i].id_professor == environment.id_prof && res[i].status=="Deferido"){
+          if(res[i].id_professor == environment.id && (res[i].status=="Deferido" || res[i].status=="Agendado")){
             var req = res[i];
             console.log("req", req);
             this.alunoService.getById(req.id_estudante)
@@ -110,7 +116,9 @@ export class ListareqComponent implements OnInit {
   }
 
   mudarStatus(e){
+    console.log(this.requerimento.req.id, e.value.status);
     this.requerimentoService.setStatus(this.requerimento.req.id, e.value.status);
+    //pegar o requerimento na res da requisição e atualiar no this.requerimentos
     this.modal.dismissAll();
     this.router.navigate(['lista']);
   }
@@ -134,7 +142,45 @@ export class ListareqComponent implements OnInit {
     this.modal.dismissAll();
   }
 
+  getAluno(){
+    this.alunoService.getById(Number(environment.id))
+    .subscribe(
+      (res)=>{
+        this.aluno = res;
+      },
+      (err)=>{console.log(err);}
+    )
+  }
+
+  aluno_getRequerimentos(){
+    this.getAluno();
+    this.requerimentoService.getByAlunoId(Number(environment.id))
+    .subscribe(
+      (res)=>{
+        for(let i=0;i<res.length;i++){
+          console.log("res[i]", res[i]);
+          this.professorService.getById(res[i].id_professor)
+          .subscribe(
+            (prof)=>{
+              this.requerimentos.push({
+                req: res[i],
+                aluno: this.aluno,
+                prof: prof
+              });
+            }
+          )
+        }
+      },
+      (err)=>{console.log(err);}
+    )
+  }
+
   logoff(){
+    this.auth.setIsLogged(false);
+    this.router.navigate(['']);
+  }
+
+  ngOnDestroy(){
     this.auth.setIsLogged(false);
     this.router.navigate(['']);
   }

@@ -5,6 +5,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ListareqComponent } from './listareq/listareq.component';
 import { ModalConfirmacao } from './home/home.component';
+import { ModalConsulta } from './home/home.component';
+
 import { AuthGuard } from './auth.guard';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -23,7 +25,8 @@ const appRoutes: Routes = [
     AppComponent,
     HomeComponent,
     ListareqComponent,
-    ModalConfirmacao
+    ModalConfirmacao,
+    ModalConsulta
   ],
   imports: [
     BrowserModule,
@@ -36,6 +39,6 @@ const appRoutes: Routes = [
   ],
   providers: [],
   bootstrap: [AppComponent],
-  entryComponents: [ModalConfirmacao]
+  entryComponents: [ModalConfirmacao, ModalConsulta]
 })
 export class AppModule { }

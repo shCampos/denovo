@@ -1,9 +1,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col" style="text-align: center">
-      <img style="width: 200px; margin-left: auto; margin-right: auto;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo">
+      <!-- <img style="width: 200px; margin-left: auto; margin-right: auto;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo"> -->
+      <img style="width: 220px; margin-left: auto; margin-right: auto;" src="/src/assets/logo.jpg" alt="logo">
       <h1>DeNovo</h1>
-      <h6>Sistema de requerimentos de segunda chamada</h6>
+      <h6>SISTEMA DE REQUERIMENTOS DE SEGUNDA CHAMADA</h6>
     </div>
     
   </div>
@@ -24,8 +25,17 @@
                 <th scope="col">Status</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody *ngIf="!flagAluno">
               <tr *ngFor="let r of requerimentos" (click)="openModal(maisInfo); mudarReq(r)" style="cursor: pointer">
+                <td>{{r.aluno.nome_estudante}}</td>
+                <td>{{r.req.materia}}</td>
+                <td>{{r.prof.nome}}</td>
+                <td>{{r.req.status}}</td>
+              </tr>
+            </tbody>
+            <tbody>
+            <tbody *ngIf="flagAluno">             
+              <tr *ngFor="let r of requerimentos">
                 <td>{{r.aluno.nome_estudante}}</td>
                 <td>{{r.req.materia}}</td>
                 <td>{{r.prof.nome}}</td>

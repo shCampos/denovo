@@ -1,5 +1,5 @@
 .container-fluid{
-    height: 100vh;
+    height: auto;
 }
 
 .row{
@@ -13,6 +13,9 @@
 .card-title{
     text-align: center;
     text-transform: uppercase;
-    font-size: 16pt;
-    
+    font-size: 16pt;    
+}
+
+.card{
+    margin-bottom: 20px !important;
 }

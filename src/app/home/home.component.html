@@ -1,9 +1,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col" style="text-align: center">
-      <img style="width: 200px; margin-left: auto; margin-right: auto;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo">
+      <!-- <img style="width: 200px; margin-left: auto; margin-right: auto;" src="https://www.google.com/a/cpanel/estudante.ifms.edu.br/images/logo.gif?service=google_gsuite" alt="logo"> -->
+      <img style="width: 220px; margin-left: auto; margin-right: auto;" src="/src/assets/logo.jpg" alt="logo">
       <h1>DeNovo</h1>
-      <h6>Sistema de requerimentos de segunda chamada</h6>
+      <h6>SISTEMA DE REQUERIMENTOS DE SEGUNDA CHAMADA</h6>
     </div>
     
   </div>
@@ -75,11 +76,12 @@
           <div class="card-title">
             CONSULTAR REQUERIMENTO
           </div>
+          <h5>colocar instrução aqui</h5>
           <form #pesquisa="ngForm" class="form-inline" (ngSubmit)="pesquisarRequerimento(pesquisa)">
             <div class="form-group">
-              <input [(ngModel)]="pesquisa.hash" placeholder="Código do requerimento" class="form-control mr-sm-2" id="hash" name="hash" type="text">
+              <input [(ngModel)]="pesquisa.coisa" placeholder="Código ou RA" class="form-control mr-sm-2" id="coisa" name="coisa" type="text">
             </div>
-            <div (click)="openModal(info)"><button type="submit" class="btn btn-outline-success my-2 my-sm-0"><i class="fas fa-search"></i></button></div>
+            <button type="submit" class="btn btn-outline-success my-2 my-sm-0"><i class="fas fa-search"></i></button>
           </form>
         </div>
       </div>
@@ -103,22 +105,6 @@
     </div>
   </div>
 </div>
-
-<ng-template #info let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">REQUERIMENTO - {{requerimento.hash}}</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <h3>O status atual é {{requerimento.status}}</h3>
-    <h3 *ngIf="flagAg">A data da nova avaliação é {{agendamento.data}}</h3>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('Save click')">Ok</button>
-  </div>
-</ng-template>
 
 <ng-template #coord let-modal>
   <div class="modal-header">

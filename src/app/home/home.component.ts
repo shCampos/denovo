@@ -36,10 +36,35 @@ export class ModalConfirmacao {
 }
 
 @Component({
+  selector: 'modal-consulta',
+  template: `
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">REQUERIMENTO - {{hash}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h3>{{mensagem}}</h3>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('Save click')">Ok</button>
+  </div>
+  `,
+  exportAs: "ModalConsulta"
+})
+export class ModalConsulta{
+  @Input() hash = "";
+  @Input() mensagem = "";
+
+  constructor(public activeModal: NgbActiveModal){}
+}
+
+@Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  entryComponents: [ModalConfirmacao],
+  entryComponents: [ModalConfirmacao, ModalConsulta],
 })
 export class HomeComponent implements OnInit {
   flagSenha: Boolean;
@@ -49,11 +74,11 @@ export class HomeComponent implements OnInit {
   formFlag: Boolean;
   hash: any;
   professores: any[];
-  requerimento: any;
   flagAg: Boolean;
-  agendamento: any;
 
   confirmModal: any;
+  consultaModal: any;
+
   constructor(private requerimentoService: RequerimentoService, private alunoService: AlunoService,
     private professorService: ProfessorService, private modal: NgbModal, private coordenacaoService: CoordenacaoService,
     private router: Router, private auth: AuthGuard, private agendamentoService: AgendamentoService){
@@ -109,25 +134,50 @@ export class HomeComponent implements OnInit {
   }
 
   pesquisarRequerimento(e){
-    this.requerimentoService.getByHash(e.value.hash)
-    .subscribe(
-      (res)=>{
-        this.requerimento = res;
-        if(this.requerimento.status == "Agendado"){
-          this.flagAg = true;
-          this.agendamentoService.getByReqId(this.requerimento.id)
-          .subscribe(
-            (ag)=>{
-              this.agendamento = ag;
-            },
-            (err)=>{console.log(err);}
-          );
-        }
-      },
-      (err)=>{
-        console.log(err);
+    let validateStr = (stringToValidate) => {
+      var pattern = /[a-zA-Z]+[(@!#\$%\^\&*\)\(+=._-]{1,}/;
+      if ( stringToValidate && stringToValidate.length > 2 && pattern.test(stringToValidate)) {
+        return true;
+      } else {
+        return false;
       }
-    );
+    };
+
+    if(validateStr){
+      this.alunoService.getByRA(e.value.coisa)
+      .subscribe(
+        (res)=>{
+          environment.tipo_user = "visitante";
+          environment.id = res.id;
+          this.auth.setIsLogged(true);
+          this.router.navigate(['lista']);
+        },
+        (err)=>{console.log(err);}
+      );
+    }else{
+      this.requerimentoService.getByHash(e.value.coisa)
+      .subscribe(
+        (res)=>{
+          if(res.status == "Agendado"){
+            this.flagAg = true;
+            this.agendamentoService.getByReqId(res.id)
+            .subscribe(
+              (ag)=>{
+                this.consultaModal.componentInstance.mensagem = "O status atual é " + res.status +". A data da nova avaliação é "+ag.data;
+              },
+              (err)=>{console.log(err);}
+            );
+          }else{         
+            this.consultaModal = this.modal.open(ModalConsulta);
+            this.consultaModal.componentInstance.hash = this.hash;
+            this.consultaModal.componentInstance.mensagem = "O status atual é " + res.status +".";
+          }
+        },
+        (err)=>{
+          console.log(err);
+        }
+      );
+    }
   }
 
   criarHash(){
@@ -175,7 +225,7 @@ export class HomeComponent implements OnInit {
           console.log("prof", e.value);
           this.auth.setIsLogged(true);
           environment.tipo_user = "prof";
-          environment.id_prof = res.id;
+          environment.id = res.id;
           this.modal.dismissAll();
           this.router.navigate(['lista']);
         }else{
