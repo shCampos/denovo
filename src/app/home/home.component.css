@@ -19,3 +19,8 @@
 .card{
     margin-bottom: 20px !important;
 }
+
+.center{
+    display: flex;
+    margin: auto;
+}

@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RequerimentoService {
-  reqs: Observable<any>;
+  reqs: Observable<any[]>;
 
   constructor(private http: HttpClient){}
 
-  getAll(){
-    this.reqs = this.http.get(environment.url+"requerimento");
-    return this.reqs;
+  getAll(): Observable<Object[]>{
+    return this.http.get<Object[]>(environment.url+"requerimento");
   }
 
   createReq(req){
@@ -29,12 +29,11 @@ export class RequerimentoService {
   }
 
   getByHash(hash){
-    this.reqs = this.http.get(environment.url+"requerimento/hash/"+hash);
-    return this.reqs;
+    return this.http.get(environment.url+"requerimento/hash/"+hash);
   }
 
   getByAlunoId(id){
-    return this.http.get(environment.url+"requerimento/est/"+id);
+    return this.http.get<any[]>(environment.url+"requerimento/est/"+id);
   }
 
   setStatus(id, status){

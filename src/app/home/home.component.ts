@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { RequerimentoService } from '../requerimento.service';
 import { AlunoService } from '../aluno.service';
 import { ProfessorService } from '../professor.service';
@@ -7,8 +7,10 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { AuthGuard } from '../auth.guard';
 import { AgendamentoService } from '../agendamento.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import { isNullOrUndefined } from 'util';
+import { Observable, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 
 @Component({
   selector: 'modal-confirmacao',
@@ -77,7 +79,10 @@ export class HomeComponent implements OnInit {
   flagAg: Boolean;
 
   confirmModal: any;
-  consultaModal: any;
+  consultaModal: any;  
+
+  //@ViewChild('instance') instance: NgbTypeahead;
+  formatter = (x: {nome: string}) => x.nome;
 
   constructor(private requerimentoService: RequerimentoService, private alunoService: AlunoService,
     private professorService: ProfessorService, private modal: NgbModal, private coordenacaoService: CoordenacaoService,
@@ -99,6 +104,15 @@ export class HomeComponent implements OnInit {
       }
     );
   }
+
+  search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => (term === '' ? this.professores
+        : this.professores.filter(v => v.nome.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10))
+    )
+  
 
   novoRequerimento(e){
     console.log(e.value);

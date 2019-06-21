@@ -5,8 +5,7 @@
       <img style="width: 220px; margin-left: auto; margin-right: auto;" src="/src/assets/logo.jpg" alt="logo">
       <h1>DeNovo</h1>
       <h6>SISTEMA DE REQUERIMENTOS DE SEGUNDA CHAMADA</h6>
-    </div>
-    
+    </div> 
   </div>
   <div class="row">
     <div class="col">
@@ -15,10 +14,18 @@
           <div class="card-title">
             CRIAR NOVO REQUERIMENTO
           </div>
-          <div class="row">
-            <div class="col">
-              <button class="btn btn-outline-success" (click)="formFlag=true" *ngIf="!formFlag">NOVO REQUERIMENTO</button>
+          <!-- <div class="row"> -->
+            <!-- <div class="col"> -->
+              <div *ngIf="!formFlag">
+                <p style="text-align: justify">Olá, tudo bem? <br>
+                    Você pode realizar requerimentos das atividades perdidas de maneira automática.
+                </p>
+                <button class="btn btn-outline-success center" (click)="formFlag=true">NOVO REQUERIMENTO</button>
+              </div>
               <div *ngIf="formFlag">
+                <div class="w-100 d-block">
+                  <i class="fas fa-times-circle float-right text-secondary" style="font-size: 15pt; cursor: pointer;" (click)="formFlag=false"></i>
+                </div>
                 <ngb-alert *ngIf="flagRa" [dismissible]="false" type="danger">
                   RA inválido!
                 </ngb-alert>
@@ -34,9 +41,16 @@
                     </div>
                     <div class="form-group col">
                       <label for="professor">Professor</label>
-                      <select required class="form-control" name="professor" id="professor" [(ngModel)]="novo.professor">
+                      <ng-template #rt let-r="result" let-t="term">
+                        {{ r.nome}}
+                      </ng-template>
+                      <input placeholder="Professor" id="professor" name="professor" type="text" class="form-control" [(ngModel)]="novo.professor"
+                      [ngbTypeahead]="search"
+                      [inputFormatter]="formatter"
+                      [resultTemplate]="rt"/>
+                      <!-- <select required class="form-control" name="professor" id="professor" [(ngModel)]="novo.professor">
                         <option *ngFor="let p of professores" value="{{p.id}}">{{p.nome}}</option>
-                      </select>
+                      </select> -->
                     </div>
                   </div>
                   <div class="form-group">
@@ -62,11 +76,11 @@
                       <label class="form-check-label" for="j5">Convocação do Campus do IFMS para representar a Instituição ou participar de alguma atividade/evento</label>  
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-outline-success">Enviar</button>
+                  <button type="submit" class="btn btn-outline-success float-right">Enviar</button>
                 </form>
               </div>                    
-            </div>
-          </div>
+            <!-- </div> -->
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -77,7 +91,7 @@
             CONSULTAR REQUERIMENTO
           </div>
           <h5>colocar instrução aqui</h5>
-          <form #pesquisa="ngForm" class="form-inline" (ngSubmit)="pesquisarRequerimento(pesquisa)">
+          <form #pesquisa="ngForm" class="form-inline center" style="width: fit-content" (ngSubmit)="pesquisarRequerimento(pesquisa)">
             <div class="form-group">
               <input [(ngModel)]="pesquisa.coisa" placeholder="Código ou RA" class="form-control mr-sm-2" id="coisa" name="coisa" type="text">
             </div>

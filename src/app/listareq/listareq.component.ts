@@ -14,6 +14,7 @@ import { AgendamentoService } from '../agendamento.service';
   styleUrls: ['./listareq.component.css']
 })
 export class ListareqComponent implements OnInit {
+  //requerimentos: Observable<Object[]>;
   requerimentos: any[];
   requerimento: any;
   professor: any;
@@ -42,6 +43,16 @@ export class ListareqComponent implements OnInit {
     }
     console.log(this.flagUser);
   }
+
+  // coord_getRequerimentos(){
+  //   this.requerimentoService.getAll()
+  //   .subscribe(
+  //     (res)=>{
+  //       this.requerimentos = res;
+  //     },
+  //     (err)=>{console.log(err);}
+  //   )
+  // }
 
   coord_getRequerimentos(){
     this.requerimentoService.getAll()
@@ -93,15 +104,13 @@ export class ListareqComponent implements OnInit {
     this.requerimentoService.getAll()
     .subscribe(
       (res)=>{
-        for(var i=0;i<res.length;i++){
+        for(let i=0;i<res.length;i++){
           if(res[i].id_professor == environment.id && (res[i].status=="Deferido" || res[i].status=="Agendado")){
-            var req = res[i];
-            console.log("req", req);
-            this.alunoService.getById(req.id_estudante)
+            this.alunoService.getById(res[i].id_estudante)
             .subscribe(
               (al)=>{
                 this.requerimentos.push({
-                  req: req,
+                  req: res[i],
                   aluno: al,
                   prof: this.professor
                 });
