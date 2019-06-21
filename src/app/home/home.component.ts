@@ -17,7 +17,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
   template: `
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">{{situacao}}</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -25,7 +25,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
     <h4>{{mensagem}}</h4>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.dismss('Cross click')">Ok</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Save click')">Ok</button>
   </div>
   `,
   exportAs: "ModalConfirmacao"
@@ -96,7 +96,8 @@ export class HomeComponent implements OnInit {
   getAllProfs(){
     this.professorService.getAll()
     .subscribe(
-      (res)=>{
+      (res: any[])=>{
+        console.log(res);
         for(var i=0;i<res.length;i++){
           this.professores.push(res[i]);
         }
@@ -117,17 +118,14 @@ export class HomeComponent implements OnInit {
     console.log(e.value);
     var id;
     this.alunoService.getByRA(e.value.ra).subscribe(
-      (res)=>{
+      (res: {id})=>{
         if(isNullOrUndefined(res)){
           this.flagRa = true;
         }else{
           this.formFlag = false;
-          console.log("res", res, res.id);
-          id = res.id;
           this.hash = this.criarHash();
-          console.log("id", id);
           this.requerimentoService.createReq({
-            id_estudante: id,
+            id_estudante: res.id,
             id_professor: e.value.professor,
             justificativa: e.value.justificativa,
             materia: e.value.materia,
@@ -139,10 +137,7 @@ export class HomeComponent implements OnInit {
           this.confirmModal.componentInstance.mensagem = "O requerimento foi realizado com sucesso. Para consulta, use o código "+this.hash+".";  
         }
       },
-      (err) => {
-        console.log("aoishashioa");
-        console.log(err);
-      }
+      (err) => {console.log(err);}
     );
   }
 
@@ -150,7 +145,7 @@ export class HomeComponent implements OnInit {
     if(/REQ/.test(e.value.coisa) || /req/.test(e.value.coisa) || /Req/.test(e.value.coisa)){
       this.requerimentoService.getByHash(e.value.coisa)
       .subscribe(
-        (res)=>{
+        (res: {status, id, hash})=>{
           if(isNullOrUndefined(res)){
             this.confirmModal = this.modal.open(ModalConfirmacao);
             this.confirmModal.componentInstance.situacao = 'Código não achado';
@@ -159,7 +154,7 @@ export class HomeComponent implements OnInit {
             this.flagAg = true;
             this.agendamentoService.getByReqId(res.id)
             .subscribe(
-              (ag)=>{
+              (ag: {data})=>{
                 this.consultaModal.componentInstance.mensagem = "O status atual é " + res.status +". A data da nova avaliação é "+ag.data;
               },
               (err)=>{console.log(err);}
@@ -177,7 +172,7 @@ export class HomeComponent implements OnInit {
     }else{
       this.alunoService.getByRA(e.value.coisa)
       .subscribe(
-        (res)=>{
+        (res: {id})=>{
           environment.tipo_user = "visitante";
           environment.id = res.id;
           this.auth.setIsLogged(true);
@@ -206,7 +201,7 @@ export class HomeComponent implements OnInit {
     this.flagSenha = false;
     this.coordenacaoService.getBySetor(e.value.setor)
     .subscribe(
-      (res)=>{
+      (res: {senha})=>{
         if(e.value.senha == res.senha){
           environment.tipo_user = "coord";
           environment.setor = e.value.setor;
@@ -227,7 +222,7 @@ export class HomeComponent implements OnInit {
     this.flagSenha = false;
     this.professorService.getByEmail(e.value.email)
     .subscribe(
-      (res)=>{
+      (res: {senha, id})=>{
         console.log("res", res);
         if(e.value.senha == res.senha){
           console.log("prof", e.value);

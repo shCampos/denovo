@@ -57,14 +57,12 @@ export class ListareqComponent implements OnInit {
   coord_getRequerimentos(){
     this.requerimentoService.getAll()
     .subscribe(
-      (res)=>{
+      (res: {id_professor, id_estudante}[])=>{
         for(let i=0;i<res.length;i++){
           console.log("res[i]", res[i]);
-          var req = res[i];
-          var id_prof = res[i].id_professor;
           this.alunoService.getById(res[i].id_estudante)
           .subscribe(
-            (al)=>{
+            (al: {coordenacao})=>{
               //console.log(al.coordenacao, environment.setor, res[i].id_professor);
               if(al.coordenacao == environment.setor){
                 this.professorService.getById(res[i].id_professor)
@@ -103,7 +101,7 @@ export class ListareqComponent implements OnInit {
     this.getProf();
     this.requerimentoService.getAll()
     .subscribe(
-      (res)=>{
+      (res: {id_professor, status, id_estudante}[])=>{
         for(let i=0;i<res.length;i++){
           if(res[i].id_professor == environment.id && (res[i].status=="Deferido" || res[i].status=="Agendado")){
             this.alunoService.getById(res[i].id_estudante)
