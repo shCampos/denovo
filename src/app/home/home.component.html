@@ -90,7 +90,10 @@
           <div class="card-title">
             CONSULTAR REQUERIMENTO
           </div>
-          <h5>colocar instrução aqui</h5>
+          <p style="text-align: justify">
+            Se você quiser ver um requerimento em específico, digite o código dele aqui.<br>
+            Se você quiser ver todos os seus requerimentos, digite seu RA.
+          </p>
           <form #pesquisa="ngForm" class="form-inline center" style="width: fit-content" (ngSubmit)="pesquisarRequerimento(pesquisa)">
             <div class="form-group">
               <input [(ngModel)]="pesquisa.coisa" placeholder="Código ou RA" class="form-control mr-sm-2" id="coisa" name="coisa" type="text">
@@ -105,15 +108,17 @@
         <div class="card-body">
           <div class="card-title">
             ADMINISTRAR REQUERIMENTO
-            <div class="row">
-              <div class="col">
-                <button class="btn btn-outline-success" (click)="openModal(coord)">COORDENAÇÃO</button>
-              </div>
-              <div class="col">
-                <button class="btn btn-outline-success" (click)="openModal(prof)">PROFESSOR</button>
-              </div>
-            </div>
           </div>
+          <div class="row">
+            <div class="col">
+              <p style="text-align: justify"><b>Coordenador</b>, faça o login para gerenciar os requerimentos.</p>
+              <button class="btn btn-outline-success center" (click)="openModal(coord)">COORDENAÇÃO</button>
+            </div>
+            <div class="col">
+              <p style="text-align: justify"><b>Professor</b>, faça o login para agendar os requerimentos.</p>
+              <button class="btn btn-outline-success center" (click)="openModal(prof)">PROFESSOR</button>
+            </div>
+          </div>          
         </div>
       </div>
     </div>

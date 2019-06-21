@@ -7,10 +7,10 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { AuthGuard } from '../auth.guard';
 import { AgendamentoService } from '../agendamento.service';
-import { NgbActiveModal, NgbModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { isNullOrUndefined } from 'util';
 import { Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'modal-confirmacao',
@@ -25,7 +25,7 @@ import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
     <h4>{{mensagem}}</h4>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.dismss('Save click')">Ok</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismss('Cross click')">Ok</button>
   </div>
   `,
   exportAs: "ModalConfirmacao"
@@ -42,7 +42,7 @@ export class ModalConfirmacao {
   template: `
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">REQUERIMENTO - {{hash}}</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -50,7 +50,7 @@ export class ModalConfirmacao {
     <h3>{{mensagem}}</h3>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('Save click')">Ok</button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Save click')">Ok</button>
   </div>
   `,
   exportAs: "ModalConsulta"
@@ -79,9 +79,8 @@ export class HomeComponent implements OnInit {
   flagAg: Boolean;
 
   confirmModal: any;
-  consultaModal: any;  
+  consultaModal: any;
 
-  //@ViewChild('instance') instance: NgbTypeahead;
   formatter = (x: {nome: string}) => x.nome;
 
   constructor(private requerimentoService: RequerimentoService, private alunoService: AlunoService,
@@ -148,31 +147,15 @@ export class HomeComponent implements OnInit {
   }
 
   pesquisarRequerimento(e){
-    let validateStr = (stringToValidate) => {
-      var pattern = /[a-zA-Z]+[(@!#\$%\^\&*\)\(+=._-]{1,}/;
-      if ( stringToValidate && stringToValidate.length > 2 && pattern.test(stringToValidate)) {
-        return true;
-      } else {
-        return false;
-      }
-    };
-
-    if(validateStr){
-      this.alunoService.getByRA(e.value.coisa)
-      .subscribe(
-        (res)=>{
-          environment.tipo_user = "visitante";
-          environment.id = res.id;
-          this.auth.setIsLogged(true);
-          this.router.navigate(['lista']);
-        },
-        (err)=>{console.log(err);}
-      );
-    }else{
+    if(/REQ/.test(e.value.coisa) || /req/.test(e.value.coisa) || /Req/.test(e.value.coisa)){
       this.requerimentoService.getByHash(e.value.coisa)
       .subscribe(
         (res)=>{
-          if(res.status == "Agendado"){
+          if(isNullOrUndefined(res)){
+            this.confirmModal = this.modal.open(ModalConfirmacao);
+            this.confirmModal.componentInstance.situacao = 'Código não achado';
+            this.confirmModal.componentInstance.mensagem = "O código não foi encontrado. Confira se digitou certo.";    
+          }else if(res.status == "Agendado"){
             this.flagAg = true;
             this.agendamentoService.getByReqId(res.id)
             .subscribe(
@@ -183,7 +166,7 @@ export class HomeComponent implements OnInit {
             );
           }else{         
             this.consultaModal = this.modal.open(ModalConsulta);
-            this.consultaModal.componentInstance.hash = this.hash;
+            this.consultaModal.componentInstance.hash = res.hash;
             this.consultaModal.componentInstance.mensagem = "O status atual é " + res.status +".";
           }
         },
@@ -191,13 +174,24 @@ export class HomeComponent implements OnInit {
           console.log(err);
         }
       );
+    }else{
+      this.alunoService.getByRA(e.value.coisa)
+      .subscribe(
+        (res)=>{
+          environment.tipo_user = "visitante";
+          environment.id = res.id;
+          this.auth.setIsLogged(true);
+          this.router.navigate(['lista']);
+        },
+        (err)=>{console.log(err);}
+      );
     }
   }
 
   criarHash(){
-    var caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    var tamChave = 10;
-    let text = "";
+    var caracteres = "1234567890";
+    var tamChave = 4;
+    let text = "REQ";
     for (let i = 0; i < tamChave; i++) {
       text += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
     }
