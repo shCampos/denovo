@@ -30,29 +30,35 @@
                   RA inválido!
                 </ngb-alert>
                 <form #novo="ngForm" (ngSubmit)="novoRequerimento(novo)">
-                  <div class="form-group">
-                    <label for="ra">RA (apenas números)</label>
-                    <input required type="number" maxlength="5" class="form-control" placeholder="RA" id="ra" name="ra" [(ngModel)]="novo.ra"/>
+                  <div class="form-row">
+                    <div class="form-group col">
+                      <div class="form-group">
+                        <label for="ra">RA (apenas números)</label>
+                        <input required type="number" maxlength="5" class="form-control" placeholder="RA" id="ra" name="ra" [(ngModel)]="novo.ra"/>
+                      </div>
+                    </div>
+                    <div class="form-group col">
+                      <div class="form-group">
+                        <label for="turma">Turma</label>
+                        <input required type="text" maxlength="4" class="form-control" placeholder="Turma" id="turma" name="turma" [(ngModel)]="novo.turma"/>
+                      </div>
+                    </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group col">
                       <label for="materia">Materia</label>
                       <input placeholder="Código da matéria" id="materia" name="materia" type="text" class="form-control" [(ngModel)]="novo.materia"
                       [ngbTypeahead]="searchMaterias"/>
-                      <!-- <input required type="text" class="form-control" placeholder="Matéria" id="materia" name="materia" [(ngModel)]="novo.materia"> -->
                     </div>
                     <div class="form-group col">
                       <label for="professor">Professor</label>
                       <ng-template #rt let-r="result" let-t="term">
-                        {{ r.nome}}
+                        {{r.nome}}
                       </ng-template>
                       <input placeholder="Professor" id="professor" name="professor" type="text" class="form-control" [(ngModel)]="novo.professor"
                       [ngbTypeahead]="searchProf"
                       [inputFormatter]="formatter"
                       [resultTemplate]="rt"/>
-                      <!-- <select required class="form-control" name="professor" id="professor" [(ngModel)]="novo.professor">
-                        <option *ngFor="let p of professores" value="{{p.id}}">{{p.nome}}</option>
-                      </select> -->
                     </div>
                   </div>
                   <div class="form-group">

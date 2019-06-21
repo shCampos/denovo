@@ -19,7 +19,8 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th scope="col">Requerente</th>
+                <th scope="col">Aluno</th>
+                <th scope="col">Turma</th>
                 <th scope="col">Materia</th>
                 <th scope="col">Professor</th>
                 <th scope="col">Status</th>
@@ -28,6 +29,7 @@
             <tbody *ngIf="!flagAluno">
               <tr *ngFor="let r of requerimentos" (click)="openModal(maisInfo); mudarReq(r)" style="cursor: pointer">
                 <td>{{r.aluno.nome_estudante}}</td>
+                <td>{{r.req.turma_estudante}}</td>
                 <td>{{r.req.materia}}</td>
                 <td>{{r.prof.nome}}</td>
                 <td>{{r.req.status}}</td>
@@ -37,6 +39,7 @@
             <tbody *ngIf="flagAluno">             
               <tr *ngFor="let r of requerimentos">
                 <td>{{r.aluno.nome_estudante}}</td>
+                <td>{{r.req.turma_estudante}}</td>
                 <td>{{r.req.materia}}</td>
                 <td>{{r.prof.nome}}</td>
                 <td>{{r.req.status}}</td>
@@ -57,7 +60,8 @@
     </button>
   </div>
   <div class="modal-body">
-    <h6><strong>Requerente:</strong> {{requerimento.aluno.nome_estudante}}</h6>
+    <h6><strong>Aluno:</strong> {{requerimento.aluno.nome_estudante}}</h6>
+    <h6><strong>Turma:</strong> {{requerimento.req.turma_estudante}}</h6>
     <h6><strong>Materia:</strong> {{requerimento.req.materia}}</h6>
     <h6><strong>Professor:</strong> {{requerimento.prof.nome}}</h6>
     <h6><strong>Justificativa:</strong> {{requerimento.req.justificativa}}</h6>

@@ -142,6 +142,7 @@ export class HomeComponent implements OnInit {
           this.hash = this.criarHash();
           this.requerimentoService.createReq({
             id_estudante: res.id,
+            turma_estudante: e.value.turma,
             id_professor: e.value.professor,
             justificativa: e.value.justificativa,
             materia: e.value.materia,
