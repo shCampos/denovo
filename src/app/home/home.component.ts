@@ -9,8 +9,9 @@ import { AuthGuard } from '../auth.guard';
 import { AgendamentoService } from '../agendamento.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { isNullOrUndefined } from 'util';
-import { Observable, Subject} from 'rxjs';
+import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { MateriaService } from '../materia.service';
 
 @Component({
   selector: 'modal-confirmacao',
@@ -76,6 +77,7 @@ export class HomeComponent implements OnInit {
   formFlag: Boolean;
   hash: any;
   professores: any[];
+  materias: any[];
   flagAg: Boolean;
 
   confirmModal: any;
@@ -85,12 +87,19 @@ export class HomeComponent implements OnInit {
 
   constructor(private requerimentoService: RequerimentoService, private alunoService: AlunoService,
     private professorService: ProfessorService, private modal: NgbModal, private coordenacaoService: CoordenacaoService,
-    private router: Router, private auth: AuthGuard, private agendamentoService: AgendamentoService){
+    private router: Router, private auth: AuthGuard, private agendamentoService: AgendamentoService,
+    private materiaService: MateriaService){
       this.professores = [];
+      this.materias = [];
     }
 
   ngOnInit() {
     this.getAllProfs();
+    this.getAllMaterias();
+  }
+
+  getAllMaterias(){
+    this.materias = this.materiaService.getAll();
   }
 
   getAllProfs(){
@@ -105,7 +114,7 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  search = (text$: Observable<string>) =>
+  searchProf = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
@@ -113,6 +122,13 @@ export class HomeComponent implements OnInit {
         : this.professores.filter(v => v.nome.toLowerCase().indexOf(term.toLowerCase()) > -1)).slice(0, 10))
     )
   
+  searchMaterias = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? []
+        : this.materias.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+    )
 
   novoRequerimento(e){
     console.log(e.value);
