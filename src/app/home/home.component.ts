@@ -90,16 +90,20 @@ export class HomeComponent implements OnInit {
     private router: Router, private auth: AuthGuard, private agendamentoService: AgendamentoService,
     private materiaService: MateriaService){
       this.professores = [];
-      this.materias = [];
+      //this.materias = this.getAllMaterias();
     }
 
   ngOnInit() {
     this.getAllProfs();
     this.getAllMaterias();
+    //console.log(this.getAllMaterias());
   }
 
   getAllMaterias(){
+    //var v = this.materiaService.getAll();
+    //var a = [...new Set(v)];
     this.materias = this.materiaService.getAll();
+
   }
 
   getAllProfs(){

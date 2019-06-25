@@ -7,6 +7,7 @@ import { ProfessorService } from '../professor.service';
 import { Router } from '@angular/router';
 import { AuthGuard } from '../auth.guard';
 import { AgendamentoService } from '../agendamento.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-listareq',
@@ -14,8 +15,8 @@ import { AgendamentoService } from '../agendamento.service';
   styleUrls: ['./listareq.component.css']
 })
 export class ListareqComponent implements OnInit {
-  //requerimentos: Observable<Object[]>;
-  requerimentos: any[];
+  requerimentos: Observable<any[]>;
+  //requerimentos: any[];
   requerimento: any;
   professor: any;
   aluno: any;
@@ -26,105 +27,35 @@ export class ListareqComponent implements OnInit {
   constructor(private requerimentoService: RequerimentoService, private modal: NgbModal,
     private alunoService: AlunoService, private professorService: ProfessorService,
     private router: Router, private auth: AuthGuard, private agendamentoService: AgendamentoService) {
-    this.requerimentos = [];
+    //this.requerimentos = {};
   }
 
   ngOnInit() {
     if(environment.tipo_user == "coord"){
       this.coord_getRequerimentos();
-      console.log(this.requerimentos);
       this.flagUser = false;
     }else if(environment.tipo_user == "prof"){
-      this.prof_getRequerimentos();
+      //this.prof_getRequerimentos();
       this.flagUser = true;
     }else if(environment.tipo_user == "visitante"){
-      this.aluno_getRequerimentos();
+      //this.aluno_getRequerimentos();
       this.flagAluno = true;
     }
     console.log(this.flagUser);
   }
 
-  // coord_getRequerimentos(){
-  //   this.requerimentoService.getAll()
-  //   .subscribe(
-  //     (res)=>{
-  //       this.requerimentos = res;
-  //     },
-  //     (err)=>{console.log(err);}
-  //   )
-  // }
-
   coord_getRequerimentos(){
-    this.requerimentoService.getAll()
-    .subscribe(
-      (res: {id_professor, id_estudante}[])=>{
-        for(let i=0;i<res.length;i++){
-          console.log("res[i]", res[i]);
-          this.alunoService.getById(res[i].id_estudante)
-          .subscribe(
-            (al: {coordenacao})=>{
-              //console.log(al.coordenacao, environment.setor, res[i].id_professor);
-              if(al.coordenacao == environment.setor){
-                this.professorService.getById(res[i].id_professor)
-                .subscribe(
-                  (prof)=>{
-                    this.requerimentos.push({
-                      req: res[i],
-                      aluno: al,
-                      prof: prof
-                    });
-                  },
-                  (err)=>{console.log(err);}
-                )
-              }
-            },
-            (err)=>{console.log(err);}
-          );
-        }
-      },
-      (err)=>{console.log(err);}
-    );
-  }
-
-  getProf(){
-    console.log("environment.id_prof", environment.id);
-    this.professorService.getById(Number(environment.id))
-    .subscribe(
-      (res)=>{
-        this.professor = res;
-      },
-      (err)=>{console.log(err);}
-    );
+    this.requerimentos = this.requerimentoService.getAllByCoord(environment.setor);
+    console.log("this.requerimentos", this.requerimentos);
   }
 
   prof_getRequerimentos(){
-    this.getProf();
-    this.requerimentoService.getAll()
-    .subscribe(
-      (res: {id_professor, status, id_estudante}[])=>{
-        for(let i=0;i<res.length;i++){
-          if(res[i].id_professor == environment.id && (res[i].status=="Deferido" || res[i].status=="Agendado")){
-            this.alunoService.getById(res[i].id_estudante)
-            .subscribe(
-              (al)=>{
-                this.requerimentos.push({
-                  req: res[i],
-                  aluno: al,
-                  prof: this.professor
-                });
-              },
-              (err)=>{console.log(err);}
-            )
-          }
-        }
-      },
-      (err)=>{console.log(err);}
-    );
+    this.requerimentos = this.requerimentoService.getAllByProf(environment.id);
   }
 
   mudarStatus(e){
-    console.log(this.requerimento.req.id, e.value.status);
-    this.requerimentoService.setStatus(this.requerimento.req.id, e.value.status);
+    console.log(this.requerimento[0].id, e.value.status);
+    this.requerimentoService.setStatus(this.requerimento[0].id, e.value.status);
     //pegar o requerimento na res da requisição e atualiar no this.requerimentos
     this.modal.dismissAll();
     this.router.navigate(['lista']);
@@ -149,37 +80,8 @@ export class ListareqComponent implements OnInit {
     this.modal.dismissAll();
   }
 
-  getAluno(){
-    this.alunoService.getById(Number(environment.id))
-    .subscribe(
-      (res)=>{
-        this.aluno = res;
-      },
-      (err)=>{console.log(err);}
-    )
-  }
-
   aluno_getRequerimentos(){
-    this.getAluno();
-    this.requerimentoService.getByAlunoId(Number(environment.id))
-    .subscribe(
-      (res)=>{
-        for(let i=0;i<res.length;i++){
-          console.log("res[i]", res[i]);
-          this.professorService.getById(res[i].id_professor)
-          .subscribe(
-            (prof)=>{
-              this.requerimentos.push({
-                req: res[i],
-                aluno: this.aluno,
-                prof: prof
-              });
-            }
-          )
-        }
-      },
-      (err)=>{console.log(err);}
-    )
+    this.requerimentos = this.requerimentoService.getByAlunoId(environment.id);
   }
 
   logoff(){

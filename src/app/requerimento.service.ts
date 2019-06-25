@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, materialize } from 'rxjs/operators';
+import { Requerimento } from './model/Requerimento';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,12 @@ export class RequerimentoService {
 
   constructor(private http: HttpClient){}
 
-  getAll(): Observable<Object[]>{
-    return this.http.get<Object[]>(environment.url+"requerimento");
+  getAllByCoord(coord): Observable<any[]>{
+    return this.http.get<any[]>(environment.url+"requerimento/coord/"+coord);
+  }
+
+  getAllByProf(id): Observable<any[]>{
+    return this.http.get<any[]>(environment.url+"requerimento/prof/"+id);
   }
 
   createReq(req){

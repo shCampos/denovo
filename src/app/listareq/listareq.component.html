@@ -27,22 +27,22 @@
               </tr>
             </thead>
             <tbody *ngIf="!flagAluno">
-              <tr *ngFor="let r of requerimentos" (click)="openModal(maisInfo); mudarReq(r)" style="cursor: pointer">
-                <td>{{r.aluno.nome_estudante}}</td>
-                <td>{{r.req.turma_estudante}}</td>
-                <td>{{r.req.materia}}</td>
-                <td>{{r.prof.nome}}</td>
-                <td>{{r.req.status}}</td>
+              <tr *ngFor="let r of requerimentos | async" (click)="openModal(maisInfo); mudarReq(r)" style="cursor: pointer">
+                <td>{{r[1].nome_estudante}}</td>
+                <td>{{r[0].turma_estudante}}</td>
+                <td>{{r[0].materia}}</td>
+                <td>{{r[2].nome}}</td>
+                <td>{{r[0].status}}</td>
               </tr>
-            </tbody>
+            </tbody>  
             <tbody>
             <tbody *ngIf="flagAluno">             
               <tr *ngFor="let r of requerimentos">
-                <td>{{r.aluno.nome_estudante}}</td>
-                <td>{{r.req.turma_estudante}}</td>
-                <td>{{r.req.materia}}</td>
-                <td>{{r.prof.nome}}</td>
-                <td>{{r.req.status}}</td>
+                <td>{{r[1].nome_estudante}}</td>
+                <td>{{r[0].turma_estudante}}</td>
+                <td>{{r[0].materia}}</td>
+                <td>{{r[2].nome}}</td>
+                <td>{{r[0].status}}</td>
               </tr>
             </tbody>
           </table>
@@ -60,12 +60,12 @@
     </button>
   </div>
   <div class="modal-body">
-    <h6><strong>Aluno:</strong> {{requerimento.aluno.nome_estudante}}</h6>
-    <h6><strong>Turma:</strong> {{requerimento.req.turma_estudante}}</h6>
-    <h6><strong>Materia:</strong> {{requerimento.req.materia}}</h6>
-    <h6><strong>Professor:</strong> {{requerimento.prof.nome}}</h6>
-    <h6><strong>Justificativa:</strong> {{requerimento.req.justificativa}}</h6>
-    <h6><strong>Status:</strong> {{requerimento.req.status}}</h6>
+    <h6><strong>Aluno:</strong> {{requerimento[1].nome_estudante}}</h6>
+    <h6><strong>Turma:</strong> {{requerimento[0].turma_estudante}}</h6>
+    <h6><strong>Materia:</strong> {{requerimento[0].materia}}</h6>
+    <h6><strong>Professor:</strong> {{requerimento[2].nome}}</h6>
+    <h6><strong>Justificativa:</strong> {{requerimento[0].justificativa}}</h6>
+    <h6><strong>Status:</strong> {{requerimento[0].status}}</h6>
   </div>
   <div class="modal-footer">
     <form *ngIf="!flagUser" class="form-inline" #novoStatus="ngForm" (ngSubmit)="mudarStatus(novoStatus)">
