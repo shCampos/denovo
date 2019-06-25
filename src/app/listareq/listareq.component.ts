@@ -39,6 +39,7 @@ export class ListareqComponent implements OnInit {
       this.flagUser = true;
     }else if(environment.tipo_user == "visitante"){
       this.aluno_getRequerimentos();
+      this.flagUser = false;
       this.flagAluno = true;
     }
     console.log(this.flagUser);
@@ -46,11 +47,14 @@ export class ListareqComponent implements OnInit {
 
   coord_getRequerimentos(){
     this.requerimentos = this.requerimentoService.getAllByCoord(environment.setor);
-    console.log("this.requerimentos", this.requerimentos);
   }
 
   prof_getRequerimentos(){
     this.requerimentos = this.requerimentoService.getAllByProf(environment.id);
+  }
+
+  aluno_getRequerimentos(){
+    this.requerimentos = this.requerimentoService.getAllByAlunoId(environment.id);
   }
 
   mudarStatus(e){
@@ -78,10 +82,6 @@ export class ListareqComponent implements OnInit {
     });
     this.requerimentoService.setStatus(this.requerimento.req.id, "Agendado");
     this.modal.dismissAll();
-  }
-
-  aluno_getRequerimentos(){
-    this.requerimentos = this.requerimentoService.getByAlunoId(environment.id);
   }
 
   logoff(){

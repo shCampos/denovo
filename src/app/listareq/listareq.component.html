@@ -37,7 +37,7 @@
             </tbody>  
             <tbody>
             <tbody *ngIf="flagAluno">             
-              <tr *ngFor="let r of requerimentos">
+              <tr *ngFor="let r of requerimentos | async">
                 <td>{{r[1].nome_estudante}}</td>
                 <td>{{r[0].turma_estudante}}</td>
                 <td>{{r[0].materia}}</td>

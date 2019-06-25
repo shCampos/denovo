@@ -9,8 +9,6 @@ import { Requerimento } from './model/Requerimento';
   providedIn: 'root'
 })
 export class RequerimentoService {
-  reqs: Observable<any[]>;
-
   constructor(private http: HttpClient){}
 
   getAllByCoord(coord): Observable<any[]>{
@@ -37,7 +35,7 @@ export class RequerimentoService {
     return this.http.get(environment.url+"requerimento/hash/"+hash);
   }
 
-  getByAlunoId(id){
+  getAllByAlunoId(id): Observable<any[]>{
     return this.http.get<any[]>(environment.url+"requerimento/est/"+id);
   }
 
