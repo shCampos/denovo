@@ -35,10 +35,10 @@ export class ListareqComponent implements OnInit {
       this.coord_getRequerimentos();
       this.flagUser = false;
     }else if(environment.tipo_user == "prof"){
-      //this.prof_getRequerimentos();
+      this.prof_getRequerimentos();
       this.flagUser = true;
     }else if(environment.tipo_user == "visitante"){
-      //this.aluno_getRequerimentos();
+      this.aluno_getRequerimentos();
       this.flagAluno = true;
     }
     console.log(this.flagUser);
