@@ -7,7 +7,8 @@ import { ProfessorService } from '../professor.service';
 import { Router } from '@angular/router';
 import { AuthGuard } from '../auth.guard';
 import { AgendamentoService } from '../agendamento.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-listareq',
@@ -15,6 +16,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./listareq.component.css']
 })
 export class ListareqComponent implements OnInit {
+  //requerimentos: Subject<Observable<any[]>[]> = new BehaviorSubject<Observable<any[]>[]>([]);
   requerimentos: Observable<any[]>;
   //requerimentos: any[];
   requerimento: any;
@@ -45,8 +47,9 @@ export class ListareqComponent implements OnInit {
     console.log(this.flagUser);
   }
 
+
   coord_getRequerimentos(){
-    this.requerimentos = this.requerimentoService.getAllByCoord(environment.setor);
+    this.requerimentos = this.requerimentoService.getAllByCoord(environment.id);
   }
 
   prof_getRequerimentos(){
@@ -59,10 +62,27 @@ export class ListareqComponent implements OnInit {
 
   mudarStatus(e){
     console.log(this.requerimento[0].id, e.value.status);
+    var status = e.value.status;
     this.requerimentoService.setStatus(this.requerimento[0].id, e.value.status);
-    //pegar o requerimento na res da requisição e atualiar no this.requerimentos
+    this.requerimentos.subscribe(
+      (res)=>{
+        console.log("res", res);
+        this.coord_getRequerimentos();
+        // res.forEach(r => {
+        //   console.log("ta no forEach", r);
+        //   if(r[0].id == this.requerimento[0].id){
+        //     console.log("entrou no if");
+        //     console.log("status", status);
+        //     console.log("antes r[0]", r[0]);
+        //     r[0].status = status;
+        //     console.log("r[0]", r[0], status);
+        //   }
+        // });
+      },
+      (err)=>{console.log(err);}
+    );
     this.modal.dismissAll();
-    this.router.navigate(['lista']);
+    //this.requerimentos = this.requerimentoService.requerimentos;
   }
 
   mudarReq(r){

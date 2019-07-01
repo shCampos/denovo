@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class MateriaService{
-  URL: string = "https://shaolinbackend.herokuapp.com/api/aulas";
+  URL: string = "https://shaolinbackend.herokuapp.com/api/materias";
   aulas: any[];
   
   constructor(private http: HttpClient){ this.aulas = []; }
@@ -14,10 +14,10 @@ export class MateriaService{
   getAll(){
     var vetor = [];
     this.http.get(this.URL)
-    .subscribe((res: {materia}[])=>{
+    .subscribe((res: {nome}[])=>{
       for(let i=0;i<res.length;i++){
-        if(!/PE/.test(res[i].materia)){
-          vetor.push(res[i].materia);
+        if(!/PE/.test(res[i].nome)){
+          vetor.push(res[i].nome);
         }
       }
     });

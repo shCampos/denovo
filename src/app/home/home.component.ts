@@ -73,13 +73,16 @@ export class HomeComponent implements OnInit {
   flagSenha: Boolean;
   flagOutraJust: Boolean;
   flagRa: Boolean;
-  setores: any[] = ['COINF', 'COCIP', 'COTAD', 'COMET'];
+  flagRa2: Boolean;
+  flagHash: Boolean;
+  flagAg: Boolean;
   formFlag: Boolean;
-  hash: any;
+
+  setores: any[] = ['COINF', 'COCIP', 'COTAD', 'COMET'];
   professores: any[];
   materias: any[];
-  flagAg: Boolean;
 
+  hash: any;
   confirmModal: any;
   consultaModal: any;
 
@@ -90,18 +93,14 @@ export class HomeComponent implements OnInit {
     private router: Router, private auth: AuthGuard, private agendamentoService: AgendamentoService,
     private materiaService: MateriaService){
       this.professores = [];
-      //this.materias = this.getAllMaterias();
     }
 
   ngOnInit() {
     this.getAllProfs();
     this.getAllMaterias();
-    //console.log(this.getAllMaterias());
   }
 
   getAllMaterias(){
-    //var v = this.materiaService.getAll();
-    //var a = [...new Set(v)];
     this.materias = this.materiaService.getAll();
 
   }
@@ -163,14 +162,14 @@ export class HomeComponent implements OnInit {
   }
 
   pesquisarRequerimento(e){
+    this.flagHash = false;
+    this.flagRa2 = false;
     if(/REQ/.test(e.value.coisa) || /req/.test(e.value.coisa) || /Req/.test(e.value.coisa)){
       this.requerimentoService.getByHash(e.value.coisa)
       .subscribe(
         (res: {status, id, hash})=>{
           if(isNullOrUndefined(res)){
-            this.confirmModal = this.modal.open(ModalConfirmacao);
-            this.confirmModal.componentInstance.situacao = 'Código não achado';
-            this.confirmModal.componentInstance.mensagem = "O código não foi encontrado. Confira se digitou certo.";    
+            this.flagHash = true;
           }else if(res.status == "Agendado"){
             this.flagAg = true;
             this.agendamentoService.getByReqId(res.id)
@@ -194,10 +193,14 @@ export class HomeComponent implements OnInit {
       this.alunoService.getByRA(e.value.coisa)
       .subscribe(
         (res: {id})=>{
-          environment.tipo_user = "visitante";
-          environment.id = res.id;
-          this.auth.setIsLogged(true);
-          this.router.navigate(['lista']);
+          if(isNullOrUndefined(res)){
+            this.flagRa2 = true;
+          }else{
+            environment.tipo_user = "visitante";
+            environment.id = res.id;
+            this.auth.setIsLogged(true);
+            this.router.navigate(['lista']);
+          }
         },
         (err)=>{console.log(err);}
       );

@@ -102,6 +102,12 @@
             Se você quiser ver um requerimento em específico, digite o código dele aqui.<br>
             Se você quiser ver todos os seus requerimentos, digite seu RA.
           </p>
+          <ngb-alert *ngIf="flagRa2" [dismissible]="false" type="danger">
+            RA inválido!
+          </ngb-alert>
+          <ngb-alert *ngIf="flagHash" [dismissible]="false" type="danger">
+            Código do requerimento inválido!
+          </ngb-alert>
           <form #pesquisa="ngForm" class="form-inline center" style="width: fit-content" (ngSubmit)="pesquisarRequerimento(pesquisa)">
             <div class="form-group">
               <input [(ngModel)]="pesquisa.coisa" placeholder="Código ou RA" class="form-control mr-sm-2" id="coisa" name="coisa" type="text">
